@@ -3,7 +3,6 @@ Lista endpointów
 Auth
 POST   /api/auth/login
 POST   /api/auth/logout
-GET    /api/auth/me
 
 Dentyści
 GET    /api/dentists
