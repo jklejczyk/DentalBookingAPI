@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Http\Filters\V1\AppointmentType;
+use App\Models\AppointmentType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AppointmentTypeFactory extends Factory

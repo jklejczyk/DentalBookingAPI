@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Filters\V1\User;
+use App\Models\User;
 
 return [
 
