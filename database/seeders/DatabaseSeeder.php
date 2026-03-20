@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\AppointmentType;
+use App\Models\Dentist;
 use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -25,6 +26,7 @@ class DatabaseSeeder extends Seeder
 //        ]);
 
 //        AppointmentType::factory(10)->create();
-        Patient::factory(10)->create();
+//        Patient::factory(10)->create();
+        Dentist::factory(10)->create();
     }
 }

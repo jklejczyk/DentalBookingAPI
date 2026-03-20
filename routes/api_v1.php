@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AppointmentTypeController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\DentistController;
 use App\Http\Controllers\Api\V1\PatientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,10 +26,15 @@ Route::prefix('/v1')->name('v1.')->group(function () {
         Route::delete('/appointment-type/{appointmentType}', [AppointmentTypeController::class, 'destroy'])->name('appointment-type.destroy');
 
         Route::get('/patient', [PatientController::class, 'index'])->name('patient.index');
-        Route::get('/patient/{appointmentType}', [PatientController::class, 'show'])->name('patient.show');
+        Route::get('/patient/{patient}', [PatientController::class, 'show'])->name('patient.show');
         Route::post('/patient', [PatientController::class, 'store'])->name('patient.store');
-        Route::patch('/patient/{appointmentType}', [PatientController::class, 'update'])->name('patient.update');
-        Route::delete('/patient/{appointmentType}', [PatientController::class, 'destroy'])->name('patient.destroy');
+        Route::patch('/patient/{patient}', [PatientController::class, 'update'])->name('patient.update');
+        Route::delete('/patient/{patient}', [PatientController::class, 'destroy'])->name('patient.destroy');
 
+        Route::get('/dentist', [DentistController::class, 'index'])->name('dentist.index');
+        Route::get('/dentist/{dentist}', [DentistController::class, 'show'])->name('dentist.show');
+        Route::post('/dentist', [DentistController::class, 'store'])->name('dentist.store');
+        Route::patch('/dentist/{dentist}', [DentistController::class, 'update'])->name('dentist.update');
+        Route::delete('/dentist/{dentist}', [DentistController::class, 'destroy'])->name('dentist.destroy');
     });
 });
