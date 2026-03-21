@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AppointmentController;
 use App\Http\Controllers\Api\V1\AppointmentTypeController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\DentistController;
@@ -36,5 +37,11 @@ Route::prefix('/v1')->name('v1.')->group(function () {
         Route::post('/dentist', [DentistController::class, 'store'])->name('dentist.store');
         Route::patch('/dentist/{dentist}', [DentistController::class, 'update'])->name('dentist.update');
         Route::delete('/dentist/{dentist}', [DentistController::class, 'destroy'])->name('dentist.destroy');
+
+        Route::get('/appointment', [AppointmentController::class, 'index'])->name('appointment.index');
+        Route::get('/appointment/{appointment}', [AppointmentController::class, 'show'])->name('appointment.show');
+        Route::post('/appointment', [AppointmentController::class, 'store'])->name('appointment.store');
+        Route::patch('/appointment/{appointment}', [AppointmentController::class, 'update'])->name('appointment.update');
+        Route::delete('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');
     });
 });

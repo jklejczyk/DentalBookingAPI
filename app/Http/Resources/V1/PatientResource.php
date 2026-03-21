@@ -23,11 +23,13 @@ class PatientResource extends JsonResource
                 'pesel' => $this->pesel,
                 'email' => $this->email,
                 'gender' => $this->gender,
-                'gender_description' => $this->gender->description(),
                 'birthday' => $this->birthday,
                 'address' => $this->address,
                 'createdAt' => $this->created_at,
                 'updatedAt' => $this->updated_at,
+            ],
+            'included' => [
+                'genderDescription' => $this->gender->description(),
             ],
             'links' => [
                 [

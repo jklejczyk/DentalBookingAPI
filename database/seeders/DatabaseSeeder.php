@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Appointment;
 use App\Models\AppointmentType;
 use App\Models\Dentist;
 use App\Models\Patient;
@@ -27,6 +28,7 @@ class DatabaseSeeder extends Seeder
 
 //        AppointmentType::factory(10)->create();
 //        Patient::factory(10)->create();
-        Dentist::factory(10)->create();
+//        Dentist::factory(10)->create();
+//        Appointment::factory(10)->create();
     }
 }
