@@ -24,6 +24,7 @@ class DentistBlockedSlotController extends Controller
     {
         try {
             $dentist = Dentist::findOrFail($dentistId);
+            $this->authorize('viewAny', [DentistBlockedSlot::class, $dentist->id]);
 
             return DentistBlockedSlotResource::collection(DentistBlockedSlot::forDentist($dentist)->filter($filters)->paginate());
         } catch (ModelNotFoundException $exception) {
@@ -35,6 +36,7 @@ class DentistBlockedSlotController extends Controller
     {
         try {
             $dentist = Dentist::findOrFail($dentistId);
+            $this->authorize('create', [DentistBlockedSlot::class, $dentist->id]);
 
             $dentistBlockedSlot = DentistBlockedSlot::create(
                 array_merge($request->mappedAttributes(), ['dentist_id' => $dentist->id])
@@ -51,6 +53,7 @@ class DentistBlockedSlotController extends Controller
         try {
             $dentist = Dentist::findOrFail($dentistId);
             $dentistBlockedSlot = DentistBlockedSlot::forDentist($dentist)->findOrFail($dentistBlockedSlotId);
+            $this->authorize('delete', $dentistBlockedSlot);
             $dentistBlockedSlot->delete();
 
             return $this->ok('Dentist blocked slot successfully deleted');

@@ -27,13 +27,14 @@ class AppointmentController extends Controller
 
     public function index(AppointmentFilter $filters)
     {
-        return AppointmentResource::collection(Appointment::filter($filters)->paginate());
+        return AppointmentResource::collection(Appointment::checkVisibleForUser()->filter($filters)->paginate());
     }
 
     public function show($appointmentId)
     {
         try {
             $appointment = Appointment::findOrFail($appointmentId);
+            $this->authorize('view', $appointment);
 
             return new AppointmentResource($appointment);
         } catch (ModelNotFoundException $exception) {
@@ -76,6 +77,7 @@ class AppointmentController extends Controller
     {
         try {
             $appointment = Appointment::findOrFail($appointmentId);
+            $this->authorize('changeStatus', $appointment);
             $appointment = $this->appointmentService->transition($appointment, AppointmentStatusEnum::CONFIRMED);
 
             $patient = $appointment->patient;
@@ -92,6 +94,7 @@ class AppointmentController extends Controller
     {
         try {
             $appointment = Appointment::findOrFail($appointmentId);
+            $this->authorize('changeStatus', $appointment);
             $appointment = $this->appointmentService->transition($appointment, AppointmentStatusEnum::CANCELLED);
 
             $patient = $appointment->patient;
@@ -108,6 +111,7 @@ class AppointmentController extends Controller
     {
         try {
             $appointment = Appointment::findOrFail($appointmentId);
+            $this->authorize('changeStatus', $appointment);
             $appointment = $this->appointmentService->transition($appointment, AppointmentStatusEnum::COMPLETED);
 
             $patient = $appointment->patient;

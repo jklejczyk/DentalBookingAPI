@@ -28,6 +28,15 @@ class Appointment extends Model
         return $filters->apply($builder);
     }
 
+    public function scopeCheckVisibleForUser(Builder $builder): Builder
+    {
+        if (auth()->user()->isDentist()) {
+            return $builder->where('dentist_id', auth()->user()->dentist->id);
+        }
+
+        return $builder;
+    }
+
     public function patient()
     {
         return $this->belongsTo(Patient::class, 'patient_id');
