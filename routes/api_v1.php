@@ -38,6 +38,7 @@ Route::prefix('/v1')->name('v1.')->group(function () {
         Route::post('/dentist', [DentistController::class, 'store'])->name('dentist.store');
         Route::patch('/dentist/{dentist}', [DentistController::class, 'update'])->name('dentist.update');
         Route::delete('/dentist/{dentist}', [DentistController::class, 'destroy'])->name('dentist.destroy');
+        Route::get('/dentist/{dentist}/availability', [DentistController::class, 'availability'])->name('dentist.availability');
 
         Route::get('/appointment', [AppointmentController::class, 'index'])->name('appointment.index');
         Route::get('/appointment/{appointment}', [AppointmentController::class, 'show'])->name('appointment.show');
