@@ -25,7 +25,7 @@ class Patient extends Model
         return $filters->apply($builder);
     }
 
-    public function fullName(): string
+    public function getFullNameAttribute(): string
     {
         return $this->first_name . ' ' . $this->last_name;
     }

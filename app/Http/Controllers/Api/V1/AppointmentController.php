@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Enums\AppointmentStatusEnum;
 use App\Http\Filters\V1\AppointmentFilter;
 use App\Http\Requests\Api\V1\Appointment\StoreAppointmentRequest;
 use App\Http\Requests\Api\V1\Appointment\UpdateAppointmentRequest;
 use App\Http\Resources\V1\AppointmentResource;
+use App\Mail\AppointmentStatusChanged;
 use App\Models\Appointment;
 use App\Traits\ApiResponses;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -57,6 +60,59 @@ class AppointmentController extends Controller
             $appointment->delete();
 
             return $this->ok('Appointment successfully deleted');
+        } catch (ModelNotFoundException $exception) {
+            return $this->error('Appointment cannot found.', 404);
+        }
+    }
+
+    public function confirm($appointmentId)
+    {
+        try {
+            $appointment = Appointment::findOrFail($appointmentId);
+            $appointment->status = AppointmentStatusEnum::CONFIRMED;
+            $appointment->save();
+
+            $patient = $appointment->patient;
+            if ($patient->email) {
+                Mail::to($patient->email)->send(new AppointmentStatusChanged($appointment));
+            }
+            return new AppointmentResource($appointment);
+        } catch (ModelNotFoundException $exception) {
+            return $this->error('Appointment cannot found.', 404);
+        }
+    }
+
+    public function cancel($appointmentId)
+    {
+        try {
+            $appointment = Appointment::findOrFail($appointmentId);
+            $appointment->status = AppointmentStatusEnum::CANCELLED;
+            $appointment->save();
+
+            $patient = $appointment->patient;
+
+            if ($patient->email) {
+                Mail::to($patient->email)->send(new AppointmentStatusChanged($appointment));
+            }
+            return new AppointmentResource($appointment);
+        } catch (ModelNotFoundException $exception) {
+            return $this->error('Appointment cannot found.', 404);
+        }
+    }
+
+    public function complete($appointmentId)
+    {
+        try {
+            $appointment = Appointment::findOrFail($appointmentId);
+            $appointment->status = AppointmentStatusEnum::COMPLETED;
+            $appointment->save();
+
+            $patient = $appointment->patient;
+
+            if ($patient->email) {
+                Mail::to($patient->email)->send(new AppointmentStatusChanged($appointment));
+            }
+            return new AppointmentResource($appointment);
         } catch (ModelNotFoundException $exception) {
             return $this->error('Appointment cannot found.', 404);
         }

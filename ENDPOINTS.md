@@ -34,7 +34,6 @@ PUT    /api/appointments/{id}
 POST   /api/appointments/{id}/confirm
 POST   /api/appointments/{id}/cancel
 POST   /api/appointments/{id}/complete
-POST   /api/appointments/{id}/no-show
 
 Zablokowane terminy
 GET    /api/dentists/{id}/blocked-slots

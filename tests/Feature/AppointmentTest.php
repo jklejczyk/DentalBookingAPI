@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Enums\AppointmentStatusEnum;
+use App\Mail\AppointmentStatusChanged;
 use App\Models\Appointment;
 use App\Models\AppointmentType;
 use App\Models\Dentist;
 use App\Models\Patient;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
     $user = User::factory()->create();
@@ -26,7 +28,7 @@ it('zwraca listę wizyt', function () {
     expect($response->json('data'))->not->toBeEmpty();
 });
 
-it('filtruje listę wizyt z appointment_type zwierającym string', function () {
+it('filtruje listę wizyt na zgodne z appointment_type', function () {
     Appointment::factory(18)->create(['appointment_type_id' => $this->appointmentTypes[1]->id]);
     Appointment::factory(2)->create(['appointment_type_id' => $this->appointmentTypes[0]->id]);
 
@@ -189,3 +191,44 @@ it('zwraca 401 przy pobraniu wizyty bez tokenu', function () {
 
     $response->assertStatus(401);
 });
+
+it('oznacz wizytę jako potwierdzoną', function () {
+    Mail::fake();
+    $appointment = Appointment::factory()->create();
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.confirm', $appointment));
+
+    $response->assertStatus(200);
+    expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::CONFIRMED->value);
+    $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::CONFIRMED->value]);
+    Mail::assertSent(AppointmentStatusChanged::class);
+});
+
+it('oznacz wizytę jako odwołaną', function () {
+    Mail::fake();
+    $appointment = Appointment::factory()->create();
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.cancel', $appointment));
+
+    $response->assertStatus(200);
+    expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::CANCELLED->value);
+    $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::CANCELLED->value]);
+    Mail::assertSent(AppointmentStatusChanged::class);
+});
+
+
+it('oznacz wizytę jako zakończoną', function () {
+    Mail::fake();
+    $appointment = Appointment::factory()->create();
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.complete', $appointment));
+
+    $response->assertStatus(200);
+    expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::COMPLETED->value);
+    $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::COMPLETED->value]);
+    Mail::assertSent(AppointmentStatusChanged::class);
+});
+

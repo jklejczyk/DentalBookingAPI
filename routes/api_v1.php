@@ -43,5 +43,8 @@ Route::prefix('/v1')->name('v1.')->group(function () {
         Route::post('/appointment', [AppointmentController::class, 'store'])->name('appointment.store');
         Route::patch('/appointment/{appointment}', [AppointmentController::class, 'update'])->name('appointment.update');
         Route::delete('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');
+        Route::post('/appointment/{appointment}/confirm', [AppointmentController::class, 'confirm'])->name('appointment.confirm');
+        Route::post('/appointment/{appointment}/complete', [AppointmentController::class, 'complete'])->name('appointment.complete');
+        Route::post('/appointment/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointment.cancel');
     });
 });
