@@ -265,7 +265,7 @@ it('oznacz wizytę jako potwierdzoną', function () {
     $response->assertStatus(200);
     expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::CONFIRMED->value);
     $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::CONFIRMED->value]);
-    Mail::assertSent(AppointmentStatusChanged::class);
+    Mail::assertQueued(AppointmentStatusChanged::class);
 });
 
 it('oznacz wizytę jako odwołaną', function () {
@@ -278,7 +278,7 @@ it('oznacz wizytę jako odwołaną', function () {
     $response->assertStatus(200);
     expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::CANCELLED->value);
     $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::CANCELLED->value]);
-    Mail::assertSent(AppointmentStatusChanged::class);
+    Mail::assertQueued(AppointmentStatusChanged::class);
 });
 
 
@@ -292,7 +292,7 @@ it('oznacz wizytę jako zakończoną', function () {
     $response->assertStatus(200);
     expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::COMPLETED->value);
     $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::COMPLETED->value]);
-    Mail::assertSent(AppointmentStatusChanged::class);
+    Mail::assertQueued(AppointmentStatusChanged::class);
 });
 
 it('anuluje potwierdzoną wizytę z więcej niż 24h wyprzedzenia', function () {
@@ -307,7 +307,7 @@ it('anuluje potwierdzoną wizytę z więcej niż 24h wyprzedzenia', function () 
 
     $response->assertStatus(200);
     expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::CANCELLED->value);
-    Mail::assertSent(AppointmentStatusChanged::class);
+    Mail::assertQueued(AppointmentStatusChanged::class);
 });
 
 it('nie pozwala anulować potwierdzonej wizyty z mniej niż 24h wyprzedzenia', function () {

@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AppointmentStatusChanged extends Mailable implements ShouldQueue
+class AppointmentReminder extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -21,14 +21,14 @@ class AppointmentStatusChanged extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Zmiana statusu wizyty: ' . $this->appointment->status->description(),
+            subject: 'Przypomnienie o jutrzejszej wizycie',
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'mail.appointment-status-changed',
+            view: 'mail.appointment-reminder',
         );
     }
 }
