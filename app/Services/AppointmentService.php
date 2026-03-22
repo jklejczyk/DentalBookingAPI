@@ -4,11 +4,19 @@ namespace App\Services;
 
 use App\Http\Enums\AppointmentStatusEnum;
 use App\Models\Appointment;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class AppointmentService
 {
+    private const ALLOWED_TRANSITIONS = [
+        'booked' => [AppointmentStatusEnum::CONFIRMED->value, AppointmentStatusEnum::CANCELLED->value],
+        'confirmed' => [AppointmentStatusEnum::COMPLETED->value, AppointmentStatusEnum::CANCELLED->value],
+        'completed' => [],
+        'cancelled' => [],
+    ];
+
     public function create(array $data): Appointment
     {
         return DB::transaction(function () use ($data) {
@@ -31,6 +39,32 @@ class AppointmentService
 
             return $appointment;
         });
+    }
+
+    public function transition(Appointment $appointment, AppointmentStatusEnum $newStatus): Appointment
+    {
+        $currentStatus = $appointment->status->value;
+        $allowedStatuses = self::ALLOWED_TRANSITIONS[$currentStatus] ?? [];
+
+        if (!in_array($newStatus->value, $allowedStatuses)) {
+            throw ValidationException::withMessages([
+                'status' => "Nie można zmienić statusu z '{$currentStatus}' na '{$newStatus->value}'.",
+            ]);
+        }
+
+        if ($newStatus === AppointmentStatusEnum::CANCELLED
+            && $appointment->status === AppointmentStatusEnum::CONFIRMED
+            && Carbon::now()->diffInHours($appointment->start) < 24
+        ) {
+            throw ValidationException::withMessages([
+                'status' => 'Nie można anulować potwierdzonej wizyty na mniej niż 24h przed terminem.',
+            ]);
+        }
+
+        $appointment->status = $newStatus;
+        $appointment->save();
+
+        return $appointment;
     }
 
     private function checkForConflict(int|string $dentistId, string $start, string $end, ?int $excludeId = null): void

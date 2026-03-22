@@ -76,8 +76,7 @@ class AppointmentController extends Controller
     {
         try {
             $appointment = Appointment::findOrFail($appointmentId);
-            $appointment->status = AppointmentStatusEnum::CONFIRMED;
-            $appointment->save();
+            $appointment = $this->appointmentService->transition($appointment, AppointmentStatusEnum::CONFIRMED);
 
             $patient = $appointment->patient;
             if ($patient->email) {
@@ -93,11 +92,9 @@ class AppointmentController extends Controller
     {
         try {
             $appointment = Appointment::findOrFail($appointmentId);
-            $appointment->status = AppointmentStatusEnum::CANCELLED;
-            $appointment->save();
+            $appointment = $this->appointmentService->transition($appointment, AppointmentStatusEnum::CANCELLED);
 
             $patient = $appointment->patient;
-
             if ($patient->email) {
                 Mail::to($patient->email)->send(new AppointmentStatusChanged($appointment));
             }
@@ -111,11 +108,9 @@ class AppointmentController extends Controller
     {
         try {
             $appointment = Appointment::findOrFail($appointmentId);
-            $appointment->status = AppointmentStatusEnum::COMPLETED;
-            $appointment->save();
+            $appointment = $this->appointmentService->transition($appointment, AppointmentStatusEnum::COMPLETED);
 
             $patient = $appointment->patient;
-
             if ($patient->email) {
                 Mail::to($patient->email)->send(new AppointmentStatusChanged($appointment));
             }

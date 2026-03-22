@@ -257,7 +257,7 @@ it('zwraca 401 przy pobraniu wizyty bez tokenu', function () {
 
 it('oznacz wizytę jako potwierdzoną', function () {
     Mail::fake();
-    $appointment = Appointment::factory()->create();
+    $appointment = Appointment::factory()->create(['status' => AppointmentStatusEnum::BOOKED]);
 
     $response = $this->withHeader('Authorization', "Bearer {$this->token}")
         ->postJson(route('v1.appointment.confirm', $appointment));
@@ -270,7 +270,7 @@ it('oznacz wizytę jako potwierdzoną', function () {
 
 it('oznacz wizytę jako odwołaną', function () {
     Mail::fake();
-    $appointment = Appointment::factory()->create();
+    $appointment = Appointment::factory()->create(['status' => AppointmentStatusEnum::BOOKED]);
 
     $response = $this->withHeader('Authorization', "Bearer {$this->token}")
         ->postJson(route('v1.appointment.cancel', $appointment));
@@ -284,7 +284,7 @@ it('oznacz wizytę jako odwołaną', function () {
 
 it('oznacz wizytę jako zakończoną', function () {
     Mail::fake();
-    $appointment = Appointment::factory()->create();
+    $appointment = Appointment::factory()->create(['status' => AppointmentStatusEnum::CONFIRMED]);
 
     $response = $this->withHeader('Authorization', "Bearer {$this->token}")
         ->postJson(route('v1.appointment.complete', $appointment));
@@ -293,6 +293,74 @@ it('oznacz wizytę jako zakończoną', function () {
     expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::COMPLETED->value);
     $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::COMPLETED->value]);
     Mail::assertSent(AppointmentStatusChanged::class);
+});
+
+it('anuluje potwierdzoną wizytę z więcej niż 24h wyprzedzenia', function () {
+    Mail::fake();
+    $appointment = Appointment::factory()->create([
+        'status' => AppointmentStatusEnum::CONFIRMED,
+        'start' => Carbon::now()->addHours(48),
+    ]);
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.cancel', $appointment));
+
+    $response->assertStatus(200);
+    expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::CANCELLED->value);
+    Mail::assertSent(AppointmentStatusChanged::class);
+});
+
+it('nie pozwala anulować potwierdzonej wizyty z mniej niż 24h wyprzedzenia', function () {
+    $appointment = Appointment::factory()->create([
+        'status' => AppointmentStatusEnum::CONFIRMED,
+        'start' => Carbon::now()->addHours(12),
+    ]);
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.cancel', $appointment));
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['status']);
+});
+
+it('nie pozwala potwierdzić anulowanej wizyty', function () {
+    $appointment = Appointment::factory()->create(['status' => AppointmentStatusEnum::CANCELLED]);
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.confirm', $appointment));
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['status']);
+});
+
+it('nie pozwala potwierdzić zakończonej wizyty', function () {
+    $appointment = Appointment::factory()->create(['status' => AppointmentStatusEnum::COMPLETED]);
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.confirm', $appointment));
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['status']);
+});
+
+it('nie pozwala zakończyć wizyty ze statusu booked', function () {
+    $appointment = Appointment::factory()->create(['status' => AppointmentStatusEnum::BOOKED]);
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.complete', $appointment));
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['status']);
+});
+
+it('nie pozwala anulować zakończonej wizyty', function () {
+    $appointment = Appointment::factory()->create(['status' => AppointmentStatusEnum::COMPLETED]);
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.cancel', $appointment));
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['status']);
 });
 
 it('zwraca 422 przy konflikcie terminów', function () {
