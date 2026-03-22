@@ -5,7 +5,7 @@ namespace App\Http\Filters\V1;
 
 class DentistBlockedSlotFilter extends QueryFilter
 {
-    protected $sortable = [
+    protected array $sortable = [
         'id',
         'dentist_id',
         'createdAt' => 'created_at',

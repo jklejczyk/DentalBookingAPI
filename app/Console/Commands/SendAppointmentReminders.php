@@ -26,7 +26,7 @@ class SendAppointmentReminders extends Command
         $sent = 0;
 
         foreach ($appointments as $appointment) {
-            if ($appointment->patient->email) {
+            if ($appointment->patient && $appointment->patient->email) {
                 Mail::to($appointment->patient->email)->send(new AppointmentReminder($appointment));
                 $sent++;
             }

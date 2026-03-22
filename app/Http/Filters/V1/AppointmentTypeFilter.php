@@ -5,7 +5,7 @@ namespace App\Http\Filters\V1;
 
 class AppointmentTypeFilter extends QueryFilter
 {
-    protected $sortable = [
+    protected array $sortable = [
         'id',
         'name',
         'createdAt' => 'created_at',

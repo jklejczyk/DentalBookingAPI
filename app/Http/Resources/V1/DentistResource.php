@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\V1;
 
+use App\Models\Dentist;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin Dentist */
 class DentistResource extends JsonResource
 {
     /**

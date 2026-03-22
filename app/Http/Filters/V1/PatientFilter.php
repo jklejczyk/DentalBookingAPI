@@ -5,7 +5,7 @@ namespace App\Http\Filters\V1;
 
 class PatientFilter extends QueryFilter
 {
-    protected $sortable = [
+    protected array $sortable = [
         'id',
         'first_name',
         'last_name',

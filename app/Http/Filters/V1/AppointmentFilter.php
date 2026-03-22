@@ -5,7 +5,7 @@ namespace App\Http\Filters\V1;
 
 class AppointmentFilter extends QueryFilter
 {
-    protected $sortable = [
+    protected array $sortable = [
         'id',
         'start',
         'end',

@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 
 abstract class QueryFilter
 {
-    protected $builder;
-    protected $request;
+    protected Builder $builder;
+    protected Request $request;
+    protected array $sortable = [];
 
     public function __construct(Request $request)
     {

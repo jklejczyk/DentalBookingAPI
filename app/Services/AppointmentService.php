@@ -44,7 +44,7 @@ class AppointmentService
     public function transition(Appointment $appointment, AppointmentStatusEnum $newStatus): Appointment
     {
         $currentStatus = $appointment->status->value;
-        $allowedStatuses = self::ALLOWED_TRANSITIONS[$currentStatus] ?? [];
+        $allowedStatuses = self::ALLOWED_TRANSITIONS[$currentStatus];
 
         if (!in_array($newStatus->value, $allowedStatuses)) {
             throw ValidationException::withMessages([

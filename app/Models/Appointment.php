@@ -7,6 +7,7 @@ use App\Http\Filters\V1\QueryFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Appointment extends Model
 {
@@ -30,24 +31,30 @@ class Appointment extends Model
 
     public function scopeCheckVisibleForUser(Builder $builder): Builder
     {
-        if (auth()->user()->isDentist()) {
-            return $builder->where('dentist_id', auth()->user()->dentist->id);
+        /** @var User $user */
+        $user = auth()->user();
+
+        if ($user->isDentist()) {
+            return $builder->where('dentist_id', $user->dentist?->id);
         }
 
         return $builder;
     }
 
-    public function patient()
+    /** @return BelongsTo<Patient, $this> */
+    public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
-    public function dentist()
+    /** @return BelongsTo<Dentist, $this> */
+    public function dentist(): BelongsTo
     {
         return $this->belongsTo(Dentist::class, 'dentist_id');
     }
 
-    public function appointment_type()
+    /** @return BelongsTo<AppointmentType, $this> */
+    public function appointment_type(): BelongsTo
     {
         return $this->belongsTo(AppointmentType::class, 'appointment_type_id');
     }

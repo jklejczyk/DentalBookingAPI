@@ -10,6 +10,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property RoleEnum $role
+ * @property Dentist|null $dentist
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -51,6 +55,7 @@ class User extends Authenticatable
         ];
     }
 
+    /** @return HasOne<Dentist, $this> */
     public function dentist(): HasOne
     {
         return $this->hasOne(Dentist::class);
