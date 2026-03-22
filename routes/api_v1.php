@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AppointmentController;
 use App\Http\Controllers\Api\V1\AppointmentTypeController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\DentistBlockedSlotController;
 use App\Http\Controllers\Api\V1\DentistController;
 use App\Http\Controllers\Api\V1\PatientController;
 use Illuminate\Http\Request;
@@ -16,7 +17,6 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth:sanctum');
 
 Route::prefix('/v1')->name('v1.')->group(function () {
-    // Auth
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
         // Appointment types
@@ -39,6 +39,10 @@ Route::prefix('/v1')->name('v1.')->group(function () {
         Route::patch('/dentist/{dentist}', [DentistController::class, 'update'])->name('dentist.update');
         Route::delete('/dentist/{dentist}', [DentistController::class, 'destroy'])->name('dentist.destroy');
         Route::get('/dentist/{dentist}/availability', [DentistController::class, 'availability'])->name('dentist.availability');
+
+        Route::get('/dentist/{dentist}/blocked-slots', [DentistBlockedSlotController::class, 'index'])->name('dentist.blocked-slots.index');
+        Route::post('/dentist/{dentist}/blocked-slots', [DentistBlockedSlotController::class, 'store'])->name('dentist.blocked-slots.store');
+        Route::delete('/dentist/{dentist}/blocked-slots/{dentistBlockedSlot}', [DentistBlockedSlotController::class, 'destroy'])->name('dentist.blocked-slots.destroy');
 
         Route::get('/appointment', [AppointmentController::class, 'index'])->name('appointment.index');
         Route::get('/appointment/{appointment}', [AppointmentController::class, 'show'])->name('appointment.show');
