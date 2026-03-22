@@ -109,15 +109,15 @@ it('zwraca 401 przy braku tokenu podczas aktualizacji wizyty', function () {
 it('aktualizuj wizytę', function () {
     $appointment = Appointment::factory()->create();
     $appointmentData = Appointment::factory()->make()->toArray();
-    $appointmentData['status'] = AppointmentStatusEnum::FINISHED;
+    $appointmentData['status'] = AppointmentStatusEnum::COMPLETED;
     $formData = ['data' => ['attributes' => $appointmentData]];
 
     $response = $this->withHeader('Authorization', "Bearer {$this->token}")
         ->patchJson(route('v1.appointment.update', $appointment), $formData);
 
     $response->assertStatus(200);
-    expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::FINISHED->value);
-    $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::FINISHED->value]);
+    expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::COMPLETED->value);
+    $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::COMPLETED->value]);
 });
 
 it('zwraca 422 przy braku danych podczas aktualizacji wizyty', function () {
@@ -131,7 +131,7 @@ it('zwraca 422 przy braku danych podczas aktualizacji wizyty', function () {
 
 it('zwraca 404 przy aktualizacji nieistniejącej wizyty', function () {
     $appointmentData = Appointment::factory()->make()->toArray();
-    $appointmentData['status'] = AppointmentStatusEnum::FINISHED;
+    $appointmentData['status'] = AppointmentStatusEnum::COMPLETED;
     $formData = ['data' => ['attributes' => $appointmentData]];
 
     $response = $this->withHeader('Authorization', "Bearer {$this->token}")

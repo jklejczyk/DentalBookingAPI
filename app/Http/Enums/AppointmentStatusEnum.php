@@ -6,14 +6,16 @@ enum AppointmentStatusEnum: string
 {
     case BOOKED = 'booked';
     case CONFIRMED = 'confirmed';
-    case FINISHED = 'finished';
+    case COMPLETED = 'completed';
+    case CANCELLED = 'cancelled';
 
     public function description(): string
     {
         return match ($this) {
             self::BOOKED => 'Booked',
             self::CONFIRMED => 'Confirmed',
-            self::FINISHED => 'Finished',
+            self::COMPLETED => 'Completed',
+            self::CANCELLED => 'Cancelled',
         };
     }
 }

@@ -33,7 +33,7 @@ class AppointmentFactory extends Factory
             'dentist_id' => Dentist::inRandomOrder()->first()->id,
             'patient_id' => Patient::inRandomOrder()->first()->id,
             'appointment_type_id' => $appointmentType->id,
-            'status' => $this->faker->randomElement([AppointmentStatusEnum::BOOKED, AppointmentStatusEnum::CONFIRMED, AppointmentStatusEnum::FINISHED]),
+            'status' => $this->faker->randomElement([AppointmentStatusEnum::BOOKED, AppointmentStatusEnum::CONFIRMED, AppointmentStatusEnum::COMPLETED, AppointmentStatusEnum::CANCELLED, ]),
         ];
     }
 }
