@@ -28,6 +28,9 @@ class PatientResource extends JsonResource
                 'createdAt' => $this->created_at,
                 'updatedAt' => $this->updated_at,
             ],
+            'relationships' => [
+                'appointments' => AppointmentResource::collection($this->whenLoaded('appointments')),
+            ],
             'included' => [
                 'genderDescription' => $this->gender->description(),
             ],

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\User;
 use Carbon\Carbon;
@@ -207,4 +208,17 @@ it('zwraca 401 przy pobraniu pacjenta bez tokenu', function () {
     $response = $this->getJson(route('v1.patient.show', $patient));
 
     $response->assertStatus(401);
+});
+
+it('zwraca relacje wizyt dla pacjenta', function () {
+    \App\Models\Dentist::factory(2)->create();
+    $patient = Patient::factory()->create();
+    \App\Models\AppointmentType::factory(3)->create();
+    $appointment = Appointment::factory(5)->create(['patient_id' => $patient->id]);
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->getJson(route('v1.patient.appointments', $patient));
+
+    $response->assertStatus(200);
+    expect($response->json('data.attributes.relationships.appointments'))->not->toBe([]);
 });

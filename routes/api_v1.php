@@ -31,6 +31,7 @@ Route::prefix('/v1')->name('v1.')->group(function () {
         Route::post('/patient', [PatientController::class, 'store'])->name('patient.store');
         Route::patch('/patient/{patient}', [PatientController::class, 'update'])->name('patient.update');
         Route::delete('/patient/{patient}', [PatientController::class, 'destroy'])->name('patient.destroy');
+        Route::get('/patient/{patient}/appointments', [PatientController::class, 'appointments'])->name('patient.appointments');
 
         Route::get('/dentist', [DentistController::class, 'index'])->name('dentist.index');
         Route::get('/dentist/{dentist}', [DentistController::class, 'show'])->name('dentist.show');

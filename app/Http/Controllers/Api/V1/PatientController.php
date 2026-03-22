@@ -20,12 +20,12 @@ class PatientController extends Controller
         return PatientResource::collection(Patient::filter($filters)->paginate());
     }
 
-    public function show($appointmentTypeId)
+    public function show($patientId)
     {
         try {
-            $appointmentType = Patient::findOrFail($appointmentTypeId);
+            $patient = Patient::findOrFail($patientId);
 
-            return new PatientResource($appointmentType);
+            return new PatientResource($patient);
         } catch (ModelNotFoundException $exception) {
             return $this->error('Patient cannot be found.', 404);
         }
@@ -33,32 +33,43 @@ class PatientController extends Controller
 
     public function store(StorePatientRequest $request)
     {
-        $appointmentType = Patient::create($request->mappedAttributes());
+        $patient = Patient::create($request->mappedAttributes());
 
-        return new PatientResource($appointmentType);
+        return new PatientResource($patient);
     }
 
-    public function update(UpdatePatientRequest $request, $appointmentTypeId)
+    public function update(UpdatePatientRequest $request, $patientId)
     {
         try {
-            $appointmentType = Patient::findOrFail($appointmentTypeId);
-            $appointmentType->update($request->mappedAttributes());
+            $patient = Patient::findOrFail($patientId);
+            $patient->update($request->mappedAttributes());
 
-            return new PatientResource($appointmentType);
+            return new PatientResource($patient);
         } catch (ModelNotFoundException $exception) {
             return $this->error('Patient cannot be found.', 404);
         }
     }
 
-    public function destroy($appointmentTypeId)
+    public function destroy($patientId)
     {
         try {
-            $appointmentType = Patient::findOrFail($appointmentTypeId);
-            $appointmentType->delete();
+            $patient = Patient::findOrFail($patientId);
+            $patient->delete();
 
             return $this->ok('Patient successfully deleted');
         } catch (ModelNotFoundException $exception) {
             return $this->error('Patient cannot found.', 404);
+        }
+    }
+
+    public function appointments($patientId)
+    {
+        try {
+            $patient = Patient::with('appointments')->findOrFail($patientId);
+
+            return new PatientResource($patient);
+        } catch (ModelNotFoundException $exception) {
+            return $this->error('Patient cannot be found.', 404);
         }
     }
 }
