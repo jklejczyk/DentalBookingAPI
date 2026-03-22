@@ -10,6 +10,7 @@ use App\Http\Requests\Api\V1\Appointment\UpdateAppointmentRequest;
 use App\Http\Resources\V1\AppointmentResource;
 use App\Mail\AppointmentStatusChanged;
 use App\Models\Appointment;
+use App\Services\AppointmentService;
 use App\Traits\ApiResponses;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Mail;
@@ -17,6 +18,12 @@ use Illuminate\Support\Facades\Mail;
 class AppointmentController extends Controller
 {
     use ApiResponses;
+
+    private $appointmentService;
+    public function __construct(AppointmentService $appointmentService)
+    {
+        $this->appointmentService = $appointmentService;
+    }
 
     public function index(AppointmentFilter $filters)
     {
@@ -36,7 +43,7 @@ class AppointmentController extends Controller
 
     public function store(StoreAppointmentRequest $request)
     {
-        $appointment = Appointment::create($request->mappedAttributes());
+        $appointment = $this->appointmentService->create($request->mappedAttributes());
 
         return new AppointmentResource($appointment);
     }
@@ -45,7 +52,7 @@ class AppointmentController extends Controller
     {
         try {
             $appointment = Appointment::findOrFail($appointmentId);
-            $appointment->update($request->mappedAttributes());
+            $appointment = $this->appointmentService->update($appointment, $request->mappedAttributes());
 
             return new AppointmentResource($appointment);
         } catch (ModelNotFoundException $exception) {

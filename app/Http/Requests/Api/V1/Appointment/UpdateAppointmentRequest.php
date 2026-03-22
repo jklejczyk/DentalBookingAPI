@@ -26,12 +26,12 @@ class UpdateAppointmentRequest extends BaseAppointmentRequest
     public function rules(): array
     {
         return [
-            'data.attributes.status' => ['required', 'string', Rule::in(array_column(AppointmentStatusEnum::cases(), 'value'))],
-            'data.attributes.appointment_type_id' => 'required|integer',
-            'data.attributes.dentist_id' => 'required|integer',
-            'data.attributes.patient_id' => 'required|integer',
-            'data.attributes.start' => 'required|date',
-            'data.attributes.end' => 'required|date',
+            'data.attributes.status' => ['sometimes', 'string', Rule::in(array_column(AppointmentStatusEnum::cases(), 'value'))],
+            'data.attributes.appointment_type_id' => 'sometimes|integer',
+            'data.attributes.dentist_id' => 'sometimes|integer',
+            'data.attributes.patient_id' => 'sometimes|integer',
+            'data.attributes.start' => 'sometimes|date',
+            'data.attributes.end' => 'sometimes|date',
         ];
     }
 

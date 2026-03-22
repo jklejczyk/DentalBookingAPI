@@ -122,13 +122,18 @@ it('aktualizuj wizytę', function () {
     $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::COMPLETED->value]);
 });
 
-it('zwraca 422 przy braku danych podczas aktualizacji wizyty', function () {
+it('zwraca 422 przy nieprawidłowych danych podczas aktualizacji wizyty', function () {
     $appointment = Appointment::factory()->create();
 
+    $formData = ['data' => ['attributes' => [
+        'status' => 'nieprawidlowy_status',
+    ]]];
+
     $response = $this->withHeader('Authorization', "Bearer {$this->token}")
-        ->patchJson(route('v1.appointment.update', $appointment), []);
+        ->patchJson(route('v1.appointment.update', $appointment), $formData);
 
     $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['data.attributes.status']);
 });
 
 it('zwraca 404 przy aktualizacji nieistniejącej wizyty', function () {
@@ -140,6 +145,64 @@ it('zwraca 404 przy aktualizacji nieistniejącej wizyty', function () {
         ->patchJson(route('v1.appointment.update', 99999), $formData);
 
     $response->assertStatus(404);
+});
+
+it('zwraca 422 przy konflikcie terminów podczas aktualizacji', function () {
+    $dentist = Dentist::first();
+    $patient = Patient::first();
+    $appointmentType = $this->appointmentTypes[0];
+
+    $start = Carbon::parse('next monday')->setTime(10, 0);
+    $end = $start->copy()->addMinutes((int) $appointmentType->duration_minutes);
+
+    $existingAppointment = Appointment::factory()->create([
+        'dentist_id' => $dentist->id,
+        'patient_id' => $patient->id,
+        'appointment_type_id' => $appointmentType->id,
+        'start' => $start,
+        'end' => $end,
+        'status' => AppointmentStatusEnum::BOOKED,
+    ]);
+
+    $laterStart = $end->copy();
+    $laterEnd = $laterStart->copy()->addMinutes((int) $appointmentType->duration_minutes);
+
+    $appointmentToUpdate = Appointment::factory()->create([
+        'dentist_id' => $dentist->id,
+        'patient_id' => $patient->id,
+        'appointment_type_id' => $appointmentType->id,
+        'start' => $laterStart,
+        'end' => $laterEnd,
+        'status' => AppointmentStatusEnum::BOOKED,
+    ]);
+
+    // Próbujemy przesunąć drugą wizytę na termin pierwszej
+    $formData = ['data' => ['attributes' => [
+        'start' => $start->format('Y-m-d H:i:s'),
+        'end' => $end->format('Y-m-d H:i:s'),
+    ]]];
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->patchJson(route('v1.appointment.update', $appointmentToUpdate), $formData);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['data.attributes.start']);
+});
+
+it('pozwala na aktualizację wizyty bez zmiany terminu', function () {
+    $appointment = Appointment::factory()->create([
+        'status' => AppointmentStatusEnum::BOOKED,
+    ]);
+
+    $formData = ['data' => ['attributes' => [
+        'status' => AppointmentStatusEnum::CONFIRMED->value,
+    ]]];
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->patchJson(route('v1.appointment.update', $appointment), $formData);
+
+    $response->assertStatus(200);
+    expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::CONFIRMED->value);
 });
 
 it('usuń wizytę', function () {
@@ -230,5 +293,139 @@ it('oznacz wizytę jako zakończoną', function () {
     expect($response->json('data.attributes.status'))->toBe(AppointmentStatusEnum::COMPLETED->value);
     $this->assertDatabaseHas('appointments', ['id' => $appointment->id, 'status' => AppointmentStatusEnum::COMPLETED->value]);
     Mail::assertSent(AppointmentStatusChanged::class);
+});
+
+it('zwraca 422 przy konflikcie terminów', function () {
+    $dentist = Dentist::first();
+    $patient = Patient::first();
+    $appointmentType = $this->appointmentTypes[0];
+
+    $start = Carbon::parse('next monday')->setTime(10, 0);
+    $end = $start->copy()->addMinutes((int) $appointmentType->duration_minutes);
+
+    Appointment::factory()->create([
+        'dentist_id' => $dentist->id,
+        'patient_id' => $patient->id,
+        'appointment_type_id' => $appointmentType->id,
+        'start' => $start,
+        'end' => $end,
+        'status' => AppointmentStatusEnum::BOOKED,
+    ]);
+
+    $formData = ['data' => ['attributes' => [
+        'dentist_id' => $dentist->id,
+        'patient_id' => $patient->id,
+        'appointment_type_id' => $appointmentType->id,
+        'start' => $start->format('Y-m-d H:i:s'),
+        'end' => $end->format('Y-m-d H:i:s'),
+        'status' => AppointmentStatusEnum::BOOKED->value,
+    ]]];
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.store'), $formData);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['data.attributes.start']);
+});
+
+it('pozwala na wizytę gdy istniejąca jest anulowana', function () {
+    $dentist = Dentist::first();
+    $patient = Patient::first();
+    $appointmentType = $this->appointmentTypes[0];
+
+    $start = Carbon::parse('next monday')->setTime(10, 0);
+    $end = $start->copy()->addMinutes((int) $appointmentType->duration_minutes);
+
+    Appointment::factory()->create([
+        'dentist_id' => $dentist->id,
+        'patient_id' => $patient->id,
+        'appointment_type_id' => $appointmentType->id,
+        'start' => $start,
+        'end' => $end,
+        'status' => AppointmentStatusEnum::CANCELLED,
+    ]);
+
+    $formData = ['data' => ['attributes' => [
+        'dentist_id' => $dentist->id,
+        'patient_id' => $patient->id,
+        'appointment_type_id' => $appointmentType->id,
+        'start' => $start->format('Y-m-d H:i:s'),
+        'end' => $end->format('Y-m-d H:i:s'),
+        'status' => AppointmentStatusEnum::BOOKED->value,
+    ]]];
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.store'), $formData);
+
+    $response->assertStatus(201);
+});
+
+it('pozwala na wizytę w innym terminie tego samego dentysty', function () {
+    $dentist = Dentist::first();
+    $patient = Patient::first();
+    $appointmentType = $this->appointmentTypes[0];
+
+    $start = Carbon::parse('next monday')->setTime(10, 0);
+    $end = $start->copy()->addMinutes((int) $appointmentType->duration_minutes);
+
+    Appointment::factory()->create([
+        'dentist_id' => $dentist->id,
+        'patient_id' => $patient->id,
+        'appointment_type_id' => $appointmentType->id,
+        'start' => $start,
+        'end' => $end,
+        'status' => AppointmentStatusEnum::BOOKED,
+    ]);
+
+    $laterStart = $end->copy();
+    $laterEnd = $laterStart->copy()->addMinutes((int) $appointmentType->duration_minutes);
+
+    $formData = ['data' => ['attributes' => [
+        'dentist_id' => $dentist->id,
+        'patient_id' => $patient->id,
+        'appointment_type_id' => $appointmentType->id,
+        'start' => $laterStart->format('Y-m-d H:i:s'),
+        'end' => $laterEnd->format('Y-m-d H:i:s'),
+        'status' => AppointmentStatusEnum::BOOKED->value,
+    ]]];
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.store'), $formData);
+
+    $response->assertStatus(201);
+});
+
+it('zwraca 422 przy częściowym nakładaniu terminów', function () {
+    $dentist = Dentist::first();
+    $patient = Patient::first();
+    $appointmentType = $this->appointmentTypes[0];
+
+    $start = Carbon::parse('next monday')->setTime(10, 0);
+    $end = $start->copy()->addMinutes(60);
+
+    Appointment::factory()->create([
+        'dentist_id' => $dentist->id,
+        'patient_id' => $patient->id,
+        'appointment_type_id' => $appointmentType->id,
+        'start' => $start,
+        'end' => $end,
+        'status' => AppointmentStatusEnum::BOOKED,
+    ]);
+
+    // Nowa wizyta zaczyna się 30 min po starcie istniejącej — nachodzi
+    $formData = ['data' => ['attributes' => [
+        'dentist_id' => $dentist->id,
+        'patient_id' => $patient->id,
+        'appointment_type_id' => $appointmentType->id,
+        'start' => $start->copy()->addMinutes(30)->format('Y-m-d H:i:s'),
+        'end' => $end->copy()->addMinutes(30)->format('Y-m-d H:i:s'),
+        'status' => AppointmentStatusEnum::BOOKED->value,
+    ]]];
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->postJson(route('v1.appointment.store'), $formData);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['data.attributes.start']);
 });
 
