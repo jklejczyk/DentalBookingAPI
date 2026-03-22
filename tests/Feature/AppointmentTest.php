@@ -212,7 +212,7 @@ it('usuń wizytę', function () {
         ->deleteJson(route('v1.appointment.destroy', $appointment));
 
     $response->assertStatus(200);
-    $this->assertDatabaseMissing('appointments', ['id' => $appointment->id]);
+    $this->assertSoftDeleted('appointments', ['id' => $appointment->id]);
 });
 
 it('zwraca 404 przy usuwaniu nieistniejącej wizyty', function () {
@@ -497,3 +497,33 @@ it('zwraca 422 przy częściowym nakładaniu terminów', function () {
     $response->assertJsonValidationErrors(['data.attributes.start']);
 });
 
+it('usunięta wizyta nadal istnieje w bazie', function () {
+    $appointment = Appointment::factory()->create();
+    $appointment->delete();
+
+    $this->assertSoftDeleted('appointments', ['id' => $appointment->id]);
+    expect(Appointment::withTrashed()->find($appointment->id))->not->toBeNull();
+});
+
+it('zwraca 404 przy pobraniu usuniętej wizyty', function () {
+    $appointment = Appointment::factory()->create();
+    $appointment->delete();
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->getJson(route('v1.appointment.show', $appointment));
+
+    $response->assertStatus(404);
+});
+
+it('usunięta wizyta nie pojawia się w liście', function () {
+    $appointment = Appointment::factory()->create();
+    $appointment->delete();
+
+    Appointment::factory(2)->create();
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->getJson(route('v1.appointment.index'));
+
+    $response->assertStatus(200);
+    expect($response->json('data'))->toHaveCount(2);
+});

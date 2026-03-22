@@ -138,7 +138,7 @@ it('usuń dentysty', function () {
         ->deleteJson(route('v1.dentist.destroy', $dentist));
 
     $response->assertStatus(200);
-    $this->assertDatabaseMissing('dentists', ['id' => $dentist->id]);
+    $this->assertSoftDeleted('dentists', ['id' => $dentist->id]);
 });
 
 it('zwraca 404 przy usuwaniu nieistniejącego dentysty', function () {
@@ -179,4 +179,35 @@ it('zwraca 401 przy pobraniu dentysty bez tokenu', function () {
     $response = $this->getJson(route('v1.dentist.show', $dentist));
 
     $response->assertStatus(401);
+});
+
+it('usunięty dentysta nadal istnieje w bazie', function () {
+    $dentist = Dentist::factory()->create();
+    $dentist->delete();
+
+    $this->assertSoftDeleted('dentists', ['id' => $dentist->id]);
+    expect(Dentist::withTrashed()->find($dentist->id))->not->toBeNull();
+});
+
+it('zwraca 404 przy pobraniu usuniętego dentysty', function () {
+    $dentist = Dentist::factory()->create();
+    $dentist->delete();
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->getJson(route('v1.dentist.show', $dentist));
+
+    $response->assertStatus(404);
+});
+
+it('usunięty dentysta nie pojawia się w liście', function () {
+    $dentist = Dentist::factory()->create();
+    $dentist->delete();
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->getJson(route('v1.dentist.index'));
+
+    $response->assertStatus(200);
+
+    $ids = collect($response->json('data'))->pluck('id');
+    expect($ids)->not->toContain($dentist->id);
 });

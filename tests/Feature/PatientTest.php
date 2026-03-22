@@ -167,7 +167,7 @@ it('usuń pacjenta', function () {
         ->deleteJson(route('v1.patient.destroy', $patient));
 
     $response->assertStatus(200);
-    $this->assertDatabaseMissing('patients', ['id' => $patient->id]);
+    $this->assertSoftDeleted('patients', ['id' => $patient->id]);
 });
 
 it('zwraca 404 przy usuwaniu nieistniejącego pacjenta', function () {
@@ -221,4 +221,35 @@ it('zwraca relacje wizyt dla pacjenta', function () {
 
     $response->assertStatus(200);
     expect($response->json('data.attributes.relationships.appointments'))->not->toBe([]);
+});
+
+it('usunięty pacjent nadal istnieje w bazie', function () {
+    $patient = Patient::factory()->create();
+    $patient->delete();
+
+    $this->assertSoftDeleted('patients', ['id' => $patient->id]);
+    expect(Patient::withTrashed()->find($patient->id))->not->toBeNull();
+});
+
+it('zwraca 404 przy pobraniu usuniętego pacjenta', function () {
+    $patient = Patient::factory()->create();
+    $patient->delete();
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->getJson(route('v1.patient.show', $patient));
+
+    $response->assertStatus(404);
+});
+
+it('usunięty pacjent nie pojawia się w liście', function () {
+    $patient = Patient::factory()->create();
+    $patient->delete();
+
+    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+        ->getJson(route('v1.patient.index'));
+
+    $response->assertStatus(200);
+
+    $ids = collect($response->json('data'))->pluck('id');
+    expect($ids)->not->toContain($patient->id);
 });
