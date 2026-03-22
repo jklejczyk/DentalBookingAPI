@@ -31,6 +31,11 @@ class AppointmentFilter extends QueryFilter
         return $this->builder->where('dentist_id', $value);
     }
 
+    public function status($value)
+    {
+        return $this->builder->where('status', $value);
+    }
+
     public function patient($value)
     {
         return $this->builder->where('patient_id', $value);
