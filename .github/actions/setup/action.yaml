@@ -11,8 +11,7 @@ inputs:
     default: dom, curl, libxml, mbstring, zip, pcntl, pdo, gd, redis, igbinary, msgpack, lzf, zstd, lz4, memcached, gmp, :php-psr
 
 runs:
-  using:
-    composite
+  using: composite
   steps:
     - name: Get PHP extension cache hash
       id: get-cache-hash
