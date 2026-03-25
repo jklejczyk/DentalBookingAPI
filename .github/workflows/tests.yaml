@@ -40,12 +40,13 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
         with:
           php-version: '8.3'
+          coverage: pcov
 
       - name: Install Project Dependencies
         run: composer install -q --no-interaction --no-progress
@@ -62,5 +63,11 @@ jobs:
       - name: Run PHPStan
         run: composer analyse
 
-      - name: Run Tests
-        run: php artisan test --compact
+      - name: Run Tests with Coverage
+        run: php artisan test --compact --coverage-clover=coverage.xml
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
