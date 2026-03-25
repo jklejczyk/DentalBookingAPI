@@ -1,0 +1,79 @@
+name: Generate API Documentations
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  api-docs:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: 127.0.0.1
+
+    services:
+      redis:
+        image: redis:7.0.15
+        ports:
+          - 6379:6379
+      postgres:
+        image: postgres:17.7
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          php-version: '8.3'
+
+      - name: Install Project Dependencies
+        run: composer install -q --no-interaction --no-progress
+
+      - name: Copy Environment File
+        run: cp .env.example .env
+
+      - name: Generate Application Key
+        run: php artisan key:generate
+
+      - name: Run Migrations
+        run: php artisan migrate --force
+
+      - name: Export Documentation
+        run:  php artisan scramble:export
+
+      - name: Move Documentation
+        run: cp api.json docs/api.json
+        shell: bash
+
+      - name: Set Path To Pages Deploy
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs
+
+      - name: Deploy Pages
+        uses: actions/deploy-pages@v4
+
