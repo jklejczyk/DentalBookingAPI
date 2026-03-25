@@ -66,7 +66,7 @@ jobs:
         run: php artisan scramble:export
 
       - name: Start OWASP ZA
-        uses: zaproxy/action-api-scan@v0.10
+        uses: zaproxy/action-api-scan@v0.9
         with:
           target: http://localhost:8000
           format: openapi
