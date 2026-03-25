@@ -1,0 +1,35 @@
+name: Deploy Application To Digital Ocean Droplet
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - name: Execute Remote SSH Commands
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/dentalbookingapi
+            php artisan down
+            git pull origin main
+            composer install --no-dev --no-interaction
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan view:cache
+            php artisan route:cache
+            php artisan queue:restart
+            php artisan up
+
