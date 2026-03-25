@@ -66,7 +66,7 @@ jobs:
         run: php artisan scramble:export
 
       - name: Start OWASP ZA
-        use: zaproxy/action-api-scan@v0.10
+        uses: zaproxy/action-api-scan@v0.10
         with:
           target: http://localhost:8000
           format: openapi
@@ -74,7 +74,7 @@ jobs:
           fail_action: false # ze względu na charakter testowy projektu
 
       - name: Upload ZAP Report
-        use: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7
         with:
           name: zap-report
           path: zap-report.html
