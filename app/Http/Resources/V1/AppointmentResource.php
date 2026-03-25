@@ -15,7 +15,19 @@ class AppointmentResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+
+
+
+
+
+
+
+
+
+
+
+    {
         return [
             'type' => 'appointment',
             'id' => $this->id,
