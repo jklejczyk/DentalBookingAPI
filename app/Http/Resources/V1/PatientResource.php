@@ -38,9 +38,9 @@ class PatientResource extends JsonResource
             ],
             'links' => [
                 [
-                    'self' => route('v1.patient.show', [$this->id])
-                ]
-            ]
+                    'self' => route('v1.patient.show', [$this->id]),
+                ],
+            ],
         ];
     }
 }

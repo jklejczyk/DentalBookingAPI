@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Models\User;
 
 test('logowanie użytkownika', function () {
@@ -65,7 +64,7 @@ test('brak tokenu przy wylogowaniu', function () {
 });
 
 test('niepoprawny token przy wylogowaniu', function () {
-    $response = $this->withHeader('Authorization', "Bearer 123456789")
+    $response = $this->withHeader('Authorization', 'Bearer 123456789')
         ->postJson(route('logout'));
 
     $response->assertStatus(401);

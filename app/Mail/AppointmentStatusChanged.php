@@ -14,14 +14,12 @@ class AppointmentStatusChanged extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Appointment $appointment)
-    {
-    }
+    public function __construct(public Appointment $appointment) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Zmiana statusu wizyty: ' . $this->appointment->status->description(),
+            subject: 'Zmiana statusu wizyty: '.$this->appointment->status->description(),
         );
     }
 

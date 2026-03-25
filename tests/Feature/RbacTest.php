@@ -3,12 +3,12 @@
 use App\Http\Enums\AppointmentStatusEnum;
 use App\Http\Enums\RoleEnum;
 use App\Models\Appointment;
-use App\Models\DentistBlockedSlot;
-use Carbon\Carbon;
 use App\Models\AppointmentType;
 use App\Models\Dentist;
+use App\Models\DentistBlockedSlot;
 use App\Models\Patient;
 use App\Models\User;
+use Carbon\Carbon;
 
 beforeEach(function () {
     $this->admin = User::factory()->create(['role' => RoleEnum::ADMIN]);

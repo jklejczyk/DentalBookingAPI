@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('appointment_types', function (Blueprint $table) {
-           $table->id();
-           $table->string('name');
-           $table->text('description')->nullable();
-           $table->integer('duration_minutes');
-           $table->timestamps();
+            $table->id();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->integer('duration_minutes');
+            $table->timestamps();
         });
     }
 

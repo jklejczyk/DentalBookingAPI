@@ -18,6 +18,7 @@ class DentistController extends Controller
     use ApiResponses;
 
     protected DentistAvailabilityService $dentistAvailabilityService;
+
     public function __construct(DentistAvailabilityService $dentistAvailabilityService)
     {
         $this->dentistAvailabilityService = $dentistAvailabilityService;

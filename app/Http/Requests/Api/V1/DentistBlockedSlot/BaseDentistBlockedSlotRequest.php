@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Api\V1\DentistBlockedSlot;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BaseDentistBlockedSlotRequest extends FormRequest

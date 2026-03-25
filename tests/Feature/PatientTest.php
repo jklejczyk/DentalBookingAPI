@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Appointment;
+use App\Models\AppointmentType;
+use App\Models\Dentist;
 use App\Models\Patient;
 use App\Models\User;
 use Carbon\Carbon;
@@ -15,7 +17,6 @@ test('zwraca listę pacjentów', function () {
 
     $response = $this->withHeader('Authorization', "Bearer {$this->token}")
         ->getJson(route('v1.patient.index'));
-
 
     $response->assertStatus(200);
     expect($response->json('data'))->not->toBeEmpty();
@@ -110,8 +111,8 @@ it('aktualizuj pacjenta', function () {
         ->patchJson(route('v1.patient.update', $patient), $formData);
 
     $response->assertStatus(200);
-    expect($response->json('data.attributes.first_name'))->toBe( 'nowe imie');
-    $this->assertDatabaseHas('patients', ['id' => $patient->id, 'first_name' =>  'nowe imie']);
+    expect($response->json('data.attributes.first_name'))->toBe('nowe imie');
+    $this->assertDatabaseHas('patients', ['id' => $patient->id, 'first_name' => 'nowe imie']);
 });
 
 it('zwraca 422 przy braku danych podczas aktualizacji pacjenta', function () {
@@ -211,9 +212,9 @@ it('zwraca 401 przy pobraniu pacjenta bez tokenu', function () {
 });
 
 it('zwraca relacje wizyt dla pacjenta', function () {
-    \App\Models\Dentist::factory(2)->create();
+    Dentist::factory(2)->create();
     $patient = Patient::factory()->create();
-    \App\Models\AppointmentType::factory(3)->create();
+    AppointmentType::factory(3)->create();
     $appointment = Appointment::factory(5)->create(['patient_id' => $patient->id]);
 
     $response = $this->withHeader('Authorization', "Bearer {$this->token}")

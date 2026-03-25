@@ -12,9 +12,9 @@ class AppointmentTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->words(fake()->numberBetween(1, 3) ,true),
+            'name' => fake()->words(fake()->numberBetween(1, 3), true),
             'description' => fake()->sentence(),
-            'duration_minutes' =>  fake()->randomElement(['15', '30', '45', '60', '90']),
+            'duration_minutes' => fake()->randomElement(['15', '30', '45', '60', '90']),
         ];
     }
 }

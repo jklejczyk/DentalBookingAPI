@@ -14,7 +14,7 @@ class CheckRole
         /** @var User $user */
         $user = $request->user();
 
-        if (!in_array($user->role->value, $roles)) {
+        if (! in_array($user->role->value, $roles)) {
             abort(403, 'Brak uprawnień do wykonania tej akcji.');
         }
 

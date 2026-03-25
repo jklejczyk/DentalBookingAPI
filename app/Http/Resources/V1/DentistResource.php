@@ -27,9 +27,9 @@ class DentistResource extends JsonResource
             ],
             'links' => [
                 [
-                    'self' => route('v1.dentist.show', [$this->id])
-                ]
-            ]
+                    'self' => route('v1.dentist.show', [$this->id]),
+                ],
+            ],
         ];
     }
 }

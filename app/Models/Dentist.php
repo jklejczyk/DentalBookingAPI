@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Filters\V1\QueryFilter;
+use Database\Factories\DentistFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /** @property int $id */
 class Dentist extends Model
 {
-    /** @use HasFactory<\Database\Factories\DentistFactory> */
+    /** @use HasFactory<DentistFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = ['first_name', 'last_name', 'user_id'];
@@ -29,6 +30,6 @@ class Dentist extends Model
 
     public function getFullNameAttribute(): string
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->first_name.' '.$this->last_name;
     }
 }

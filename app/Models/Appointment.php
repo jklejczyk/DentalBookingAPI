@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Http\Enums\AppointmentStatusEnum;
 use App\Http\Filters\V1\QueryFilter;
+use Database\Factories\AppointmentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Appointment extends Model
 {
-    /** @use HasFactory<\Database\Factories\AppointmentFactory> */
+    /** @use HasFactory<AppointmentFactory> */
     use HasFactory, SoftDeletes;
 
     protected $table = 'appointments';

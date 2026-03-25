@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Enums\AppointmentStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('appointment_type_id');
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('dentist_id');
-            $table->string('status')->default(\App\Http\Enums\AppointmentStatusEnum::BOOKED);
+            $table->string('status')->default(AppointmentStatusEnum::BOOKED);
             $table->dateTime('start');
             $table->dateTime('end');
             $table->timestamps();

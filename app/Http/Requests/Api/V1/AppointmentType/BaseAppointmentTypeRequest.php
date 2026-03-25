@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Api\V1\AppointmentType;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BaseAppointmentTypeRequest extends FormRequest

@@ -15,7 +15,6 @@ test('zwraca listę dentystów', function () {
     $response = $this->withHeader('Authorization', "Bearer {$this->token}")
         ->getJson(route('v1.dentist.index'));
 
-
     $response->assertStatus(200);
     expect($response->json('data'))->not->toBeEmpty();
 });
@@ -109,8 +108,8 @@ it('aktualizuj dentysty', function () {
         ->patchJson(route('v1.dentist.update', $dentist), $formData);
 
     $response->assertStatus(200);
-    expect($response->json('data.attributes.first_name'))->toBe( 'nowe imie');
-    $this->assertDatabaseHas('dentists', ['id' => $dentist->id, 'first_name' =>  'nowe imie']);
+    expect($response->json('data.attributes.first_name'))->toBe('nowe imie');
+    $this->assertDatabaseHas('dentists', ['id' => $dentist->id, 'first_name' => 'nowe imie']);
 });
 
 it('zwraca 422 przy braku danych podczas aktualizacji dentysty', function () {

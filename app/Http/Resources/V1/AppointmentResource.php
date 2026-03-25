@@ -3,7 +3,6 @@
 namespace App\Http\Resources\V1;
 
 use App\Models\Appointment;
-use App\Models\AppointmentType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +14,8 @@ class AppointmentResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
             'type' => 'appointment',
             'id' => $this->id,
@@ -35,15 +35,15 @@ class AppointmentResource extends JsonResource
                 'appointmentType' => new AppointmentTypeResource($this->whenLoaded('appointment_type')),
             ],
             'included' => [
-                'patientFullName' => $this->whenLoaded('patient', fn() => $this->patient->fullName),
-                'dentistFullName' => $this->whenLoaded('dentist', fn() => $this->dentist->fullName),
-                'appointmentTypeName' => $this->whenLoaded('appointment_type', fn() => $this->appointment_type->name),
+                'patientFullName' => $this->whenLoaded('patient', fn () => $this->patient->fullName),
+                'dentistFullName' => $this->whenLoaded('dentist', fn () => $this->dentist->fullName),
+                'appointmentTypeName' => $this->whenLoaded('appointment_type', fn () => $this->appointment_type->name),
             ],
             'links' => [
                 [
-                    'self' => route('v1.appointment.show', [$this->id])
-                ]
-            ]
+                    'self' => route('v1.appointment.show', [$this->id]),
+                ],
+            ],
         ];
     }
 }
