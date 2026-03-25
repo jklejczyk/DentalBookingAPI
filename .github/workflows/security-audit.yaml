@@ -1,0 +1,31 @@
+name: Run Tests
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          php-version: '8.3'
+
+      - name: Install Project Dependencies
+        run: composer install -q --no-interaction --no-progress
+
+      - name: Perform Project Dependencies Audit
+        run: composer audit
+        continue-on-error: true # dodane ze względu na testowy charakter projektu (omija zależność laravela league/commonmark)
