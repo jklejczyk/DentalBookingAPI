@@ -4,17 +4,21 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+    pull_request:
+      branches:
+        - main
 
 jobs:
   laravel-pint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup
         uses: ./.github/actions/setup
