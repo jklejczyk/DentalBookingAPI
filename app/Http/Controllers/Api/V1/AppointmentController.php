@@ -20,6 +20,7 @@ class AppointmentController extends Controller
     use ApiResponses;
 
     private $appointmentService;
+
     public function __construct(AppointmentService $appointmentService)
     {
         $this->appointmentService = $appointmentService;
@@ -84,6 +85,7 @@ class AppointmentController extends Controller
             if ($patient->email) {
                 Mail::to($patient->email)->send(new AppointmentStatusChanged($appointment));
             }
+
             return new AppointmentResource($appointment);
         } catch (ModelNotFoundException $exception) {
             return $this->error('Appointment cannot found.', 404);
@@ -101,6 +103,7 @@ class AppointmentController extends Controller
             if ($patient->email) {
                 Mail::to($patient->email)->send(new AppointmentStatusChanged($appointment));
             }
+
             return new AppointmentResource($appointment);
         } catch (ModelNotFoundException $exception) {
             return $this->error('Appointment cannot found.', 404);
@@ -118,6 +121,7 @@ class AppointmentController extends Controller
             if ($patient->email) {
                 Mail::to($patient->email)->send(new AppointmentStatusChanged($appointment));
             }
+
             return new AppointmentResource($appointment);
         } catch (ModelNotFoundException $exception) {
             return $this->error('Appointment cannot found.', 404);

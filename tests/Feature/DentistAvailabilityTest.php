@@ -30,8 +30,8 @@ it('zwraca wszystkie sloty gdy dentysta nie ma wizyt', function () {
 
     // 8:00-18:00 = 10h = 600min / 30min = 20 slotów
     expect($response->json('data'))->toHaveCount(20);
-    expect($response->json('data.0.start'))->toBe($date . ' 08:00');
-    expect($response->json('data.19.start'))->toBe($date . ' 17:30');
+    expect($response->json('data.0.start'))->toBe($date.' 08:00');
+    expect($response->json('data.19.start'))->toBe($date.' 17:30');
 });
 
 it('nie zwraca slotów w weekend', function () {
@@ -71,7 +71,7 @@ it('nie zwraca slotów zajętych przez wizytę', function () {
 
     $slots = collect($response->json('data'));
     expect($slots)->toHaveCount(19);
-    expect($slots->pluck('start'))->not->toContain($date->format('Y-m-d') . ' 10:00');
+    expect($slots->pluck('start'))->not->toContain($date->format('Y-m-d').' 10:00');
 });
 
 it('anulowana wizyta nie blokuje slotu', function () {
@@ -140,7 +140,7 @@ it('ostatni slot kończy się przed końcem pracy', function () {
     $slots = collect($response->json('data'));
 
     expect($slots)->toHaveCount(10);
-    expect($slots->last()['start'])->toBe($date->format('Y-m-d') . ' 17:00');
+    expect($slots->last()['start'])->toBe($date->format('Y-m-d').' 17:00');
 });
 
 it('wizyta dłuższa niż slot blokuje wiele slotów', function () {
@@ -167,8 +167,8 @@ it('wizyta dłuższa niż slot blokuje wiele slotów', function () {
     $slots = collect($response->json('data'));
 
     expect($slots)->toHaveCount(18);
-    expect($slots->pluck('start'))->not->toContain($date->format('Y-m-d') . ' 10:00');
-    expect($slots->pluck('start'))->not->toContain($date->format('Y-m-d') . ' 10:30');
+    expect($slots->pluck('start'))->not->toContain($date->format('Y-m-d').' 10:00');
+    expect($slots->pluck('start'))->not->toContain($date->format('Y-m-d').' 10:30');
 });
 
 it('zwraca 422 bez wymaganych parametrów', function () {

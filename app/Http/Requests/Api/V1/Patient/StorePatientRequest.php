@@ -4,7 +4,6 @@ namespace App\Http\Requests\Api\V1\Patient;
 
 use App\Http\Enums\GenderEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class StorePatientRequest extends BasePatientRequest

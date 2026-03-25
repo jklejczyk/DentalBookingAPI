@@ -10,7 +10,6 @@ use App\Http\Resources\V1\AppointmentTypeResource;
 use App\Models\AppointmentType;
 use App\Traits\ApiResponses;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 
 class AppointmentTypeController extends Controller
 {

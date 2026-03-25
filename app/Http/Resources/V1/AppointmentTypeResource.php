@@ -28,9 +28,9 @@ class AppointmentTypeResource extends JsonResource
             ],
             'links' => [
                 [
-                    'self' => route('v1.appointment-type.show', [$this->id])
-                ]
-            ]
+                    'self' => route('v1.appointment-type.show', [$this->id]),
+                ],
+            ],
         ];
     }
 }

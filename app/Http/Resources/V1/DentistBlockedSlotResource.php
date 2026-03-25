@@ -30,7 +30,7 @@ class DentistBlockedSlotResource extends JsonResource
             'relationships' => [
                 'dentist' => new DentistResource($this->whenLoaded('dentist')),
             ],
-            'links' => []
+            'links' => [],
         ];
     }
 }

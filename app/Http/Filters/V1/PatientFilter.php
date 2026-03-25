@@ -2,7 +2,6 @@
 
 namespace App\Http\Filters\V1;
 
-
 class PatientFilter extends QueryFilter
 {
     protected array $sortable = [
@@ -11,7 +10,7 @@ class PatientFilter extends QueryFilter
         'last_name',
         'birthday',
         'createdAt' => 'created_at',
-        'updatedAt' => 'updated_at'
+        'updatedAt' => 'updated_at',
     ];
 
     public function id($value)
@@ -25,7 +24,6 @@ class PatientFilter extends QueryFilter
         return $this->builder->where('id', $value);
     }
 
-
     public function first_name($value)
     {
         return $this->builder->whereLike('first_name', '%'.$value.'%');
@@ -36,7 +34,8 @@ class PatientFilter extends QueryFilter
         return $this->builder->whereLike('last_name', '%'.$value.'%');
     }
 
-    public function birthday($value) {
+    public function birthday($value)
+    {
         $dates = explode(',', $value);
 
         if (count($dates) > 1) {
@@ -46,7 +45,8 @@ class PatientFilter extends QueryFilter
         return $this->builder->whereDate('birthday', $value);
     }
 
-    public function createdAt($value) {
+    public function createdAt($value)
+    {
         $dates = explode(',', $value);
 
         if (count($dates) > 1) {
@@ -56,7 +56,8 @@ class PatientFilter extends QueryFilter
         return $this->builder->whereDate('created_at', $value);
     }
 
-    public function updatedAt($value) {
+    public function updatedAt($value)
+    {
         $dates = explode(',', $value);
 
         if (count($dates) > 1) {

@@ -11,7 +11,9 @@ use Carbon\Carbon;
 class DentistAvailabilityService
 {
     private const START_HOUR = 8;
+
     private const END_HOUR = 18;
+
     private const WORKING_DAYS = [1, 2, 3, 4, 5]; // pon-pt
 
     public function getAvailableSlots(Dentist $dentist, string $date, int $appointmentTypeId): array
@@ -20,7 +22,7 @@ class DentistAvailabilityService
         $durationMinutes = $appointmentType->duration_minutes;
         $date = Carbon::parse($date);
 
-        if (!in_array($date->dayOfWeekIso, self::WORKING_DAYS)) {
+        if (! in_array($date->dayOfWeekIso, self::WORKING_DAYS)) {
             return [];
         }
 
@@ -40,7 +42,7 @@ class DentistAvailabilityService
                 return $slotStart->lt($appointment->end) && $slotEnd->gt($appointment->start);
             });
 
-            if (!$isOccupied) {
+            if (! $isOccupied) {
                 $slots[] = [
                     'start' => $slotStart->format('Y-m-d H:i'),
                     'end' => $slotEnd->format('Y-m-d H:i'),

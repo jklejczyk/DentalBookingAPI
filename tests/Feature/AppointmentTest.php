@@ -281,7 +281,6 @@ it('oznacz wizytę jako odwołaną', function () {
     Mail::assertQueued(AppointmentStatusChanged::class);
 });
 
-
 it('oznacz wizytę jako zakończoną', function () {
     Mail::fake();
     $appointment = Appointment::factory()->create(['status' => AppointmentStatusEnum::CONFIRMED]);

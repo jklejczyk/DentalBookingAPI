@@ -2,14 +2,13 @@
 
 namespace App\Http\Filters\V1;
 
-
 class DentistBlockedSlotFilter extends QueryFilter
 {
     protected array $sortable = [
         'id',
         'dentist_id',
         'createdAt' => 'created_at',
-        'updatedAt' => 'updated_at'
+        'updatedAt' => 'updated_at',
     ];
 
     public function id($value)
@@ -23,13 +22,13 @@ class DentistBlockedSlotFilter extends QueryFilter
         return $this->builder->where('id', $value);
     }
 
-
     public function dentist($value)
     {
         return $this->builder->where('dentist_id', $value);
     }
 
-    public function createdAt($value) {
+    public function createdAt($value)
+    {
         $dates = explode(',', $value);
 
         if (count($dates) > 1) {
@@ -39,7 +38,8 @@ class DentistBlockedSlotFilter extends QueryFilter
         return $this->builder->whereDate('created_at', $value);
     }
 
-    public function updatedAt($value) {
+    public function updatedAt($value)
+    {
         $dates = explode(',', $value);
 
         if (count($dates) > 1) {

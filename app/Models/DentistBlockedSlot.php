@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Filters\V1\QueryFilter;
+use Database\Factories\DentistBlockedSlotFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DentistBlockedSlot extends Model
 {
-    /** @use HasFactory<\Database\Factories\DentistBlockedSlotFactory> */
+    /** @use HasFactory<DentistBlockedSlotFactory> */
     use HasFactory;
 
     protected $table = 'dentist_blocked_slots';

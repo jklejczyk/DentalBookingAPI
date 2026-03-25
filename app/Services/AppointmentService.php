@@ -46,7 +46,7 @@ class AppointmentService
         $currentStatus = $appointment->status->value;
         $allowedStatuses = self::ALLOWED_TRANSITIONS[$currentStatus];
 
-        if (!in_array($newStatus->value, $allowedStatuses)) {
+        if (! in_array($newStatus->value, $allowedStatuses)) {
             throw ValidationException::withMessages([
                 'status' => "Nie można zmienić statusu z '{$currentStatus}' na '{$newStatus->value}'.",
             ]);

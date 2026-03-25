@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\AppointmentType;
 use App\Models\Dentist;
 use App\Models\DentistBlockedSlot;
 use Carbon\Carbon;

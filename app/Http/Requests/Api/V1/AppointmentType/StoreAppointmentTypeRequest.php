@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api\V1\AppointmentType;
 
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAppointmentTypeRequest extends BaseAppointmentTypeRequest
 {
@@ -28,5 +27,4 @@ class StoreAppointmentTypeRequest extends BaseAppointmentTypeRequest
             'data.attributes.duration_minutes' => 'required|integer',
         ];
     }
-
 }

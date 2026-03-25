@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class PatientFactory extends Factory
 {
     protected $model = Patient::class;
+
     /**
      * Define the model's default state.
      *

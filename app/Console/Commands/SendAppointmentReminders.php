@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 class SendAppointmentReminders extends Command
 {
     protected $signature = 'appointments:send-reminders';
+
     protected $description = 'Wysyła przypomnienia o wizytach zaplanowanych na jutro';
 
     public function handle(): int

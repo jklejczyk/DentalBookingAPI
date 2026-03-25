@@ -4,15 +4,10 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Filters\V1\DentistFilter;
-use App\Http\Requests\Api\V1\Dentist\DentistAvailabilityRequest;
-use App\Http\Requests\Api\V1\Dentist\StoreDentistRequest;
-use App\Http\Requests\Api\V1\Dentist\UpdateDentistRequest;
 use App\Http\Requests\Api\V1\DentistBlockedSlot\StoreDentistBlockedSlotRequest;
 use App\Http\Resources\V1\DentistBlockedSlotResource;
-use App\Http\Resources\V1\DentistResource;
 use App\Models\Dentist;
 use App\Models\DentistBlockedSlot;
-use App\Services\DentistAvailabilityService;
 use App\Traits\ApiResponses;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 

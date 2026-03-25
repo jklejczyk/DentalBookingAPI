@@ -2,7 +2,6 @@
 
 namespace App\Http\Filters\V1;
 
-
 class AppointmentFilter extends QueryFilter
 {
     protected array $sortable = [
@@ -12,7 +11,7 @@ class AppointmentFilter extends QueryFilter
         'status',
         'appointment_type_id',
         'createdAt' => 'created_at',
-        'updatedAt' => 'updated_at'
+        'updatedAt' => 'updated_at',
     ];
 
     public function id($value)
@@ -46,7 +45,8 @@ class AppointmentFilter extends QueryFilter
         return $this->builder->where('appointment_type_id', $value);
     }
 
-    public function start($value) {
+    public function start($value)
+    {
         $dates = explode(',', $value);
 
         if (count($dates) > 1) {
@@ -56,7 +56,8 @@ class AppointmentFilter extends QueryFilter
         return $this->builder->whereDate('start', $value);
     }
 
-    public function end($value) {
+    public function end($value)
+    {
         $dates = explode(',', $value);
 
         if (count($dates) > 1) {
@@ -66,7 +67,8 @@ class AppointmentFilter extends QueryFilter
         return $this->builder->whereDate('end', $value);
     }
 
-    public function createdAt($value) {
+    public function createdAt($value)
+    {
         $dates = explode(',', $value);
 
         if (count($dates) > 1) {
@@ -76,7 +78,8 @@ class AppointmentFilter extends QueryFilter
         return $this->builder->whereDate('created_at', $value);
     }
 
-    public function updatedAt($value) {
+    public function updatedAt($value)
+    {
         $dates = explode(',', $value);
 
         if (count($dates) > 1) {

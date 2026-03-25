@@ -3,9 +3,7 @@
 namespace App\Http\Requests\Api\V1\Appointment;
 
 use App\Http\Enums\AppointmentStatusEnum;
-use App\Http\Requests\Api\V1\Appointment\BaseAppointmentRequest;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class UpdateAppointmentRequest extends BaseAppointmentRequest
@@ -34,5 +32,4 @@ class UpdateAppointmentRequest extends BaseAppointmentRequest
             'data.attributes.end' => 'sometimes|date',
         ];
     }
-
 }
