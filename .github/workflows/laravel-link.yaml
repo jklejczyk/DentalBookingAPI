@@ -1,0 +1,36 @@
+name: Laravel Pint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  laravel-pint:
+    runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup
+      uses: ./.github/actions/setup
+      with:
+        php-version: '8.3'
+
+    - name: Install Laravel Pint
+      run: composer global require laravel/pint
+
+    - name: Run Laravel Pint
+      run: pint
+
+    - name: Push Changes Back to Repo
+      run: |
+        git config user.name "Laravel Pint"
+        git config user.email "pint@laravel.com"
+        git add .
+        git commit -m "Laravel Pint" || exit 0
+        git push
