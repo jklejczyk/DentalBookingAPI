@@ -92,6 +92,20 @@ Opcjonalnie zaseeduj baze danymi testowymi:
 
 Aplikacja dostepna pod `http://localhost:8090`.
 
+### Dane logowania (po seedowaniu)
+
+| Email | Haslo | Rola |
+|-------|-------|------|
+| `test@example.com` | `demo123` | admin |
+
+```bash
+curl -X POST http://localhost:8090/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@example.com", "password": "demo123"}'
+```
+
+W odpowiedzi otrzymasz token Bearer, ktorego uzywasz w naglowku `Authorization` do kolejnych zapytan.
+
 ## Struktura API
 
 API jest wersjonowane (`/api/v1/`) i oparte o konwencje RESTful.
